@@ -60,7 +60,9 @@ local window = library:AddWindow("Sad | Boost Gifter", {
 
 local GifterTab = window:AddTab("Gifter")
 
-GifterTab:AddLabel("Machine to send Boosts").TextSize = 25
+local Machine = GifterTab:AddLabel("Machine To Send Boost(s)")
+Machine.TextColor3 = Color3.fromRGB(61, 10, 161)
+Machine.TextSize = 25
 
 local nothingLabel = GifterTab:AddLabel("")
 
@@ -189,3 +191,4 @@ GifterTab:AddButton("Start Gifting", function()
         end
     end
 end)
+
