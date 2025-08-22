@@ -60,15 +60,15 @@ local window = library:AddWindow("Sad | Boost Gifter", {
 
 local GifterTab = window:AddTab("Gifter")
 
-GifterTab:AddLabel("Get On a Machine For Less Lag").TextSize = 17
+GifterTab:AddLabel("Get On a Machine For Less Lag").TextSize = 30
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local proteinEggLabel = GifterTab:AddLabel("Protein Eggs: 0")
-proteinEggLabel.TextSize = 18
+proteinEggLabel.TextSize = 20
 local tropicalShakeLabel = GifterTab:AddLabel("Tropical Shakes: 0")
-tropicalShakeLabel.TextSize = 18
+tropicalShakeLabel.TextSize = 20
 
 local function updateItemCount()
     local proteinEggCount = 0
@@ -89,7 +89,7 @@ local function updateItemCount()
     tropicalShakeLabel.Text = "Tropical Shakes: " .. tropicalShakeCount
 end
 
-GifterTab:AddLabel("Egg Gifter").TextSize = 16
+GifterTab:AddLabel("Egg Gifter").TextSize = 25
 
 local eggPlayerDropdown = GifterTab:AddDropdown("Choose Player for Eggs", function(name)
     selectedEggPlayer = Players:FindFirstChild(name)
@@ -120,7 +120,7 @@ GifterTab:AddButton("Gift Eggs", function()
     end
 end)
 
-GifterTab:AddLabel("Shake Gifter").TextSize = 16
+GifterTab:AddLabel("Shake Gifter").TextSize = 25
 
 local shakePlayerDropdown = GifterTab:AddDropdown("Choose Player for Shakes", function(name)
     selectedShakePlayer = Players:FindFirstChild(name)
@@ -182,4 +182,5 @@ task.spawn(function()
         task.wait(7.5)
     end
 end)
+
 
