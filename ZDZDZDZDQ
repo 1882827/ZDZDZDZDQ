@@ -153,12 +153,19 @@ local eggGiftButton = GifterTab:AddButton("Send Protein Eggs", function()
             if not isGiftingEggs then break end
             
             local success, errorMsg = pcall(function()
-                local args = {
-                    [1] = "giftRequest",
-                    [2] = selectedPlayerEgg,
-                    [3] = "Protein Egg"
-                }
-                ReplicatedStorage.rEvents.giftRemote:InvokeServer(unpack(args))
+                local giftRemote = ReplicatedStorage:FindFirstChild("rEvents")
+                if giftRemote then
+                    giftRemote = giftRemote:FindFirstChild("giftRemote")
+                    if giftRemote then
+                        local success1 = pcall(function()
+                            giftRemote:InvokeServer("giftRequest", selectedPlayerEgg, "Protein Egg")
+                        end)
+                        
+                        if not success1 then
+                            giftRemote:InvokeServer(selectedPlayerEgg, "Protein Egg")
+                        end
+                    end
+                end
             end)
             
             if success then
@@ -168,12 +175,14 @@ local eggGiftButton = GifterTab:AddButton("Send Protein Eggs", function()
                 warn("Error sending egg: " .. tostring(errorMsg))
             end
             
-            task.wait(0.1)
+            task.wait(0.5)
         end
         
         isGiftingEggs = false
         eggGiftButton.Text = "Send Protein Eggs"
         print("Finished sending eggs. Success: " .. successCount .. ", Failed: " .. failCount)
+    else
+        warn("Please select a player and enter a valid amount of eggs")
     end
 end)
 
@@ -224,12 +233,19 @@ local shakeGiftButton = GifterTab:AddButton("Send Tropical Shakes", function()
             if not isGiftingShakes then break end
             
             local success, errorMsg = pcall(function()
-                local args = {
-                    [1] = "giftRequest",
-                    [2] = selectedPlayerShake,
-                    [3] = "Tropical Shake"
-                }
-                ReplicatedStorage.rEvents.giftRemote:InvokeServer(unpack(args))
+                local giftRemote = ReplicatedStorage:FindFirstChild("rEvents")
+                if giftRemote then
+                    giftRemote = giftRemote:FindFirstChild("giftRemote")
+                    if giftRemote then
+                        local success1 = pcall(function()
+                            giftRemote:InvokeServer("giftRequest", selectedPlayerShake, "Tropical Shake")
+                        end)
+                        
+                        if not success1 then
+                            giftRemote:InvokeServer(selectedPlayerShake, "Tropical Shake")
+                        end
+                    end
+                end
             end)
             
             if success then
@@ -239,11 +255,33 @@ local shakeGiftButton = GifterTab:AddButton("Send Tropical Shakes", function()
                 warn("Error sending shake: " .. tostring(errorMsg))
             end
             
-            task.wait(0.1)
+            task.wait(0.5)
         end
         
         isGiftingShakes = false
         shakeGiftButton.Text = "Send Tropical Shakes"
         print("Finished sending shakes. Success: " .. successCount .. ", Failed: " .. failCount)
+    else
+        warn("Please select a player and enter a valid amount of shakes")
     end
 end)
+
+local function checkRemoteExists()
+    local rEvents = ReplicatedStorage:FindFirstChild("rEvents")
+    if not rEvents then
+        warn("rEvents folder not found in ReplicatedStorage")
+        return false
+    end
+    
+    local giftRemote = rEvents:FindFirstChild("giftRemote")
+    if not giftRemote then
+        warn("giftRemote not found in rEvents folder")
+        return false
+    end
+    
+    print("giftRemote found: " .. giftRemote:GetFullName())
+    return true
+end
+
+task.wait(2)
+checkRemoteExists()
