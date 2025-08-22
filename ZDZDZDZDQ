@@ -72,44 +72,16 @@ tropicalShakeLabel.TextSize = 18
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
--- DEBUG: Find the correct event
-print("=== SEARCHING FOR GIFT EVENTS ===")
-local foundEvents = {}
+-- Use the specific events found in the log instead of searching
+print("=== USING PREVIOUSLY FOUND GIFT EVENTS ===")
 
--- Search throughout ReplicatedStorage
-function findGiftEvents(parent, path)
-    for _, child in ipairs(parent:GetChildren()) do
-        local currentPath = path .. "." .. child.Name
-        
-        if child:IsA("RemoteEvent") or child:IsA("RemoteFunction") then
-            if string.find(string.lower(child.Name), "gift") or
-               string.find(string.lower(child.Name), "present") or
-               string.find(string.lower(child.Name), "send") then
-                print("FOUND: " .. currentPath)
-                table.insert(foundEvents, {
-                    object = child,
-                    path = currentPath
-                })
-            end
-        end
-        
-        if child:IsA("Folder") or child:IsA("ModuleScript") then
-            findGiftEvents(child, currentPath)
-        end
-    end
-end
+-- Get the specific events from ReplicatedStorage
+local FEvents = ReplicatedStorage:WaitForChild("FEvents")
+local giftRemote = FEvents:WaitForChild("giftRemote")
+local giftedEvent = FEvents:WaitForChild("giftedEvent")
 
-findGiftEvents(ReplicatedStorage, "ReplicatedStorage")
-print("=== END OF SEARCH ===")
-
--- Use the first event found (or you can choose manually)
-local giftRemote = nil
-if #foundEvents > 0 then
-    giftRemote = foundEvents[1].object
-    print("Using event: " .. foundEvents[1].path)
-else
-    warn("No gift events found!")
-end
+print("USING: ReplicatedStorage.FEvents.giftRemote")
+print("USING: ReplicatedStorage.FEvents.giftedEvent")
 
 local selectedPlayerEgg = nil
 local eggCount = 0
@@ -199,29 +171,25 @@ local eggGiftButton = GifterTab:AddButton("Send Protein Eggs", function()
             if not isGiftingEggs then break end
             
             local success, errorMsg = pcall(function()
-                if giftRemote then
-                    -- Try different argument formats
-                    local success1 = pcall(function()
-                        giftRemote:InvokeServer("giftRequest", selectedPlayerEgg, "Protein Egg")
+                -- Try the specific gift remote with different argument formats
+                local success1 = pcall(function()
+                    giftRemote:InvokeServer("giftRequest", selectedPlayerEgg, "Protein Egg")
+                end)
+                
+                if not success1 then
+                    local success2 = pcall(function()
+                        giftRemote:InvokeServer(selectedPlayerEgg, "Protein Egg")
                     end)
                     
-                    if not success1 then
-                        local success2 = pcall(function()
-                            giftRemote:InvokeServer(selectedPlayerEgg, "Protein Egg")
+                    if not success2 then
+                        local success3 = pcall(function()
+                            giftRemote:FireServer("giftRequest", selectedPlayerEgg, "Protein Egg")
                         end)
                         
-                        if not success2 then
-                            local success3 = pcall(function()
-                                giftRemote:FireServer("giftRequest", selectedPlayerEgg, "Protein Egg")
-                            end)
-                            
-                            if not success3 then
-                                giftRemote:FireServer(selectedPlayerEgg, "Protein Egg")
-                            end
+                        if not success3 then
+                            giftRemote:FireServer(selectedPlayerEgg, "Protein Egg")
                         end
                     end
-                else
-                    error("No gift event found")
                 end
             end)
             
@@ -298,29 +266,25 @@ local shakeGiftButton = GifterTab:AddButton("Send Tropical Shakes", function()
             if not isGiftingShakes then break end
             
             local success, errorMsg = pcall(function()
-                if giftRemote then
-                    -- Try different argument formats
-                    local success1 = pcall(function()
-                        giftRemote:InvokeServer("giftRequest", selectedPlayerShake, "Tropical Shake")
+                -- Try the specific gift remote with different argument formats
+                local success1 = pcall(function()
+                    giftRemote:InvokeServer("giftRequest", selectedPlayerShake, "Tropical Shake")
+                end)
+                
+                if not success1 then
+                    local success2 = pcall(function()
+                        giftRemote:InvokeServer(selectedPlayerShake, "Tropical Shake")
                     end)
                     
-                    if not success1 then
-                        local success2 = pcall(function()
-                            giftRemote:InvokeServer(selectedPlayerShake, "Tropical Shake")
+                    if not success2 then
+                        local success3 = pcall(function()
+                            giftRemote:FireServer("giftRequest", selectedPlayerShake, "Tropical Shake")
                         end)
                         
-                        if not success2 then
-                            local success3 = pcall(function()
-                                giftRemote:FireServer("giftRequest", selectedPlayerShake, "Tropical Shake")
-                            end)
-                            
-                            if not success3 then
-                                giftRemote:FireServer(selectedPlayerShake, "Tropical Shake")
-                            end
+                        if not success3 then
+                            giftRemote:FireServer(selectedPlayerShake, "Tropical Shake")
                         end
                     end
-                else
-                    error("No gift event found")
                 end
             end)
             
@@ -343,9 +307,4 @@ local shakeGiftButton = GifterTab:AddButton("Send Tropical Shakes", function()
     end
 end)
 
--- Check if remote exists when script starts
-task.wait(2)
-if not giftRemote then
-    warn("WARNING: No gift event was found automatically!")
-    print("Please check the output above and manually set the correct event")
-end
+print("Gift system initialized successfully!")
