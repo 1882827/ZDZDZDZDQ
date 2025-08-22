@@ -91,6 +91,8 @@ local function updateItemCount()
     tropicalShakeLabel.Text = "Tropical Shakes: " .. tropicalShakeCount
 end
 
+local nothingLabel = GifterTab:AddLabel("")
+
 GifterTab:AddLabel("Egg Gifter").TextSize = 25
 
 local eggPlayerDropdown = GifterTab:AddDropdown("Choose Player for Eggs", function(name)
@@ -184,3 +186,4 @@ task.spawn(function()
         task.wait(7.5)
     end
 end)
+
