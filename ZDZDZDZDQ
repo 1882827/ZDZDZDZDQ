@@ -95,11 +95,35 @@ local nothingLabel = GifterTab:AddLabel("")
 
 GifterTab:AddLabel("Egg Gifter").TextSize = 25
 
-local eggPlayerDropdown = GifterTab:AddDropdown("Choose Player for Eggs", function(name)
-    selectedEggPlayer = Players:FindFirstChild(name)
-end)
+local eggPlayerDropdown = GifterTab:AddDropdown("Choose Player for Eggs", {})
+local shakePlayerDropdown = GifterTab:AddDropdown("Choose Player for Shakes", {})
+
 local selectedEggPlayer = nil
+local selectedShakePlayer = nil
 local eggCount = 0
+local shakeCount = 0
+
+local function updateDropdowns()
+    local eggOptions = {}
+    local shakeOptions = {}
+    
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= Players.LocalPlayer then
+            table.insert(eggOptions, player.Name)
+            table.insert(shakeOptions, player.Name)
+        end
+    end
+    
+    eggPlayerDropdown:SetOptions(eggOptions)
+    eggPlayerDropdown:SetCallback(function(name)
+        selectedEggPlayer = Players:FindFirstChild(name)
+    end)
+    
+    shakePlayerDropdown:SetOptions(shakeOptions)
+    shakePlayerDropdown:SetCallback(function(name)
+        selectedShakePlayer = Players:FindFirstChild(name)
+    end)
+end
 
 GifterTab:AddTextBox("Egg Amount", function(Text)
     eggCount = tonumber(Text) or 0
@@ -126,12 +150,6 @@ end)
 
 GifterTab:AddLabel("Shake Gifter").TextSize = 25
 
-local shakePlayerDropdown = GifterTab:AddDropdown("Choose Player for Shakes", function(name)
-    selectedShakePlayer = Players:FindFirstChild(name)
-end)
-local selectedShakePlayer = nil
-local shakeCount = 0
-
 GifterTab:AddTextBox("Shake Amount", function(Text)
     shakeCount = tonumber(Text) or 0
 end)
@@ -155,28 +173,14 @@ GifterTab:AddButton("Gift Shakes", function()
     end
 end)
 
-local function updateDropdowns()
-    eggPlayerDropdown:Clear()
-    shakePlayerDropdown:Clear()
-    
-    for _, player in ipairs(Players:GetPlayers()) do
-        if player ~= Players.LocalPlayer then
-            eggPlayerDropdown:Add(player.Name)
-            shakePlayerDropdown:Add(player.Name)
-        end
-    end
-end
-
 Players.PlayerAdded:Connect(function(player)
     if player ~= Players.LocalPlayer then
-        eggPlayerDropdown:Add(player.Name)
-        shakePlayerDropdown:Add(player.Name)
+        updateDropdowns()
     end
 end)
 
 Players.PlayerRemoving:Connect(function(player)
-    eggPlayerDropdown:Remove(player.Name)
-    shakePlayerDropdown:Remove(player.Name)
+    updateDropdowns()
 end)
 
 updateDropdowns()
@@ -186,4 +190,3 @@ task.spawn(function()
         task.wait(7.5)
     end
 end)
-
