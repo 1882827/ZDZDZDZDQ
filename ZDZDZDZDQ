@@ -64,8 +64,6 @@ local Machine = GifterTab:AddLabel("Machine To Send Boost(s)")
 Machine.TextColor3 = Color3.fromRGB(61, 10, 161)
 Machine.TextSize = 25
 
-local nothingLabel = GifterTab:AddLabel("")
-
 local proteinEggLabel = GifterTab:AddLabel("Protein Eggs: 0")
 proteinEggLabel.TextSize = 20
 
@@ -191,4 +189,5 @@ GifterTab:AddButton("Start Gifting", function()
         end
     end
 end)
+
 
