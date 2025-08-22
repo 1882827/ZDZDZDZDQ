@@ -124,8 +124,6 @@ GifterTab:AddButton("Gift Eggs", function()
     end
 end)
 
-local nothingLabel = GifterTab:AddLabel("")
-
 GifterTab:AddLabel("Shake Gifter").TextSize = 25
 
 local shakePlayerDropdown = GifterTab:AddDropdown("Choose Player for Shakes", function(name)
@@ -188,3 +186,4 @@ task.spawn(function()
         task.wait(7.5)
     end
 end)
+
