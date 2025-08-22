@@ -61,7 +61,7 @@ local window = library:AddWindow("Sad | Boost Gifter", {
 local GifterTab = window:AddTab("Gifter")
 
 local Machine = GifterTab:AddLabel("Machine To Send Boost(s)")
-Machine.TextColor3 = Color3.fromRGB(61, 10, 161)
+Machine.TextColor3 = Color3.fromRGB(107, 0, 255)
 Machine.TextSize = 25
 
 local proteinEggLabel = GifterTab:AddLabel("Protein Eggs: 0")
@@ -189,5 +189,6 @@ GifterTab:AddButton("Start Gifting", function()
         end
     end
 end)
+
 
 
