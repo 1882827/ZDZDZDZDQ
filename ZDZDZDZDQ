@@ -70,8 +70,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local proteinEggLabel = GifterTab:AddLabel("Protein Eggs: 0")
 proteinEggLabel.TextSize = 20
 
-local nothingLabel = GifterTab:AddLabel("")
-
 local tropicalShakeLabel = GifterTab:AddLabel("Tropical Shakes: 0")
 tropicalShakeLabel.TextSize = 20
 
@@ -191,6 +189,7 @@ task.spawn(function()
         task.wait(7.5)
     end
 end)
+
 
 
 
