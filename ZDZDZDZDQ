@@ -66,59 +66,19 @@ Machine.TextSize = 25
 
 local proteinEggLabel = GifterTab:AddLabel("Protein Eggs: 0")
 proteinEggLabel.TextSize = 20
+local tropicalShakeLabel = GifterTab:AddLabel("Tropical Shakes: 0")
+tropicalShakeLabel.TextSize = 18
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-
-local selectedPlayer = nil
+local selectedPlayerEgg = nil
 local eggCount = 0
+local isGiftingEggs = false
 
-local playerDropdown = GifterTab:AddDropdown("Choose Player", function(name)
-    selectedPlayer = Players:FindFirstChild(name)
-end)
-
-for _, player in ipairs(Players:GetPlayers()) do
-    if player ~= Players.LocalPlayer then
-        playerDropdown:Add(player.Name)
-    end
-end
-
-Players.PlayerAdded:Connect(function(player)
-    if player ~= Players.LocalPlayer then
-        playerDropdown:Add(player.Name)
-    end
-end)
-
-Players.PlayerRemoving:Connect(function(player)
-    playerDropdown:Remove(player.Name)
-    if selectedPlayer == player then
-        selectedPlayer = nil
-    end
-end)
-
-GifterTab:AddTextBox("Amount", function(Text)
-    eggCount = tonumber(Text)
-end)
-
-GifterTab:AddButton("Start Gifting", function()
-    if selectedPlayer and eggCount and eggCount > 0 then
-        for i = 1, eggCount do
-            local args = {
-                [1] = "giftRequest",
-                [2] = selectedPlayer,
-                [3] = Players.LocalPlayer.consumablesFolder:FindFirstChild("Protein Egg")
-            }
-
-            ReplicatedStorage.rEvents.giftRemote:InvokeServer(unpack(args))
-        end
-    end
-end)
-
-GifterTab:AddLabel("Shake Gifter").TextSize = 20
-
-local tropicalShakeLabel = GifterTab:AddLabel("Tropical Shakes: 0")
-tropicalShakeLabel.TextSize = 18
+local selectedPlayerShake = nil
+local shakeCount = 0
+local isGiftingShakes = false
 
 local function updateItemCount()
     local proteinEggCount = 0
@@ -146,49 +106,144 @@ task.spawn(function()
     end
 end)
 
-local selectedPlayer = nil
-local shakeCount = 0
+GifterTab:AddLabel("Protein Egg Gifter").TextSize = 20
 
-local playerDropdown = GifterTab:AddDropdown("Choose Player", function(name)
-    selectedPlayer = Players:FindFirstChild(name)
+local playerDropdownEgg = GifterTab:AddDropdown("Choose Player for Eggs", function(name)
+    selectedPlayerEgg = Players:FindFirstChild(name)
 end)
 
 for _, player in ipairs(Players:GetPlayers()) do
     if player ~= Players.LocalPlayer then
-        playerDropdown:Add(player.Name)
+        playerDropdownEgg:Add(player.Name)
     end
 end
 
 Players.PlayerAdded:Connect(function(player)
     if player ~= Players.LocalPlayer then
-        playerDropdown:Add(player.Name)
+        playerDropdownEgg:Add(player.Name)
     end
 end)
 
 Players.PlayerRemoving:Connect(function(player)
-    playerDropdown:Remove(player.Name)
-    if selectedPlayer == player then
-        selectedPlayer = nil
+    playerDropdownEgg:Remove(player.Name)
+    if selectedPlayerEgg == player then
+        selectedPlayerEgg = nil
     end
 end)
 
-GifterTab:AddTextBox("Amount", function(Text)
-    shakeCount = tonumber(Text)
+GifterTab:AddTextBox("Egg Amount", function(Text)
+    eggCount = tonumber(Text) or 0
 end)
 
-GifterTab:AddButton("Start Gifting", function()
-    if selectedPlayer and shakeCount and shakeCount > 0 then
-        for i = 1, shakeCount do
-            local args = {
-                [1] = "giftRequest",
-                [2] = selectedPlayer,
-                [3] = Players.LocalPlayer.consumablesFolder:FindFirstChild("Tropical Shake")
-            }
-
-            ReplicatedStorage.rEvents.giftRemote:InvokeServer(unpack(args))
+local eggGiftButton = GifterTab:AddButton("Send Protein Eggs", function()
+    if isGiftingEggs then
+        isGiftingEggs = false
+        eggGiftButton.Text = "Send Protein Eggs"
+        return
+    end
+    
+    if selectedPlayerEgg and eggCount and eggCount > 0 then
+        isGiftingEggs = true
+        eggGiftButton.Text = "Stop Sending Eggs"
+        
+        local successCount = 0
+        local failCount = 0
+        
+        for i = 1, eggCount do
+            if not isGiftingEggs then break end
+            
+            local success, errorMsg = pcall(function()
+                local args = {
+                    [1] = "giftRequest",
+                    [2] = selectedPlayerEgg,
+                    [3] = "Protein Egg"
+                }
+                ReplicatedStorage.rEvents.giftRemote:InvokeServer(unpack(args))
+            end)
+            
+            if success then
+                successCount = successCount + 1
+            else
+                failCount = failCount + 1
+                warn("Error sending egg: " .. tostring(errorMsg))
+            end
+            
+            task.wait(0.1)
         end
+        
+        isGiftingEggs = false
+        eggGiftButton.Text = "Send Protein Eggs"
+        print("Finished sending eggs. Success: " .. successCount .. ", Failed: " .. failCount)
     end
 end)
 
+GifterTab:AddLabel("Tropical Shake Gifter").TextSize = 20
 
+local playerDropdownShake = GifterTab:AddDropdown("Choose Player for Shakes", function(name)
+    selectedPlayerShake = Players:FindFirstChild(name)
+end)
 
+for _, player in ipairs(Players:GetPlayers()) do
+    if player ~= Players.LocalPlayer then
+        playerDropdownShake:Add(player.Name)
+    end
+end
+
+Players.PlayerAdded:Connect(function(player)
+    if player ~= Players.LocalPlayer then
+        playerDropdownShake:Add(player.Name)
+    end
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+    playerDropdownShake:Remove(player.Name)
+    if selectedPlayerShake == player then
+        selectedPlayerShake = nil
+    end
+end)
+
+GifterTab:AddTextBox("Shake Amount", function(Text)
+    shakeCount = tonumber(Text) or 0
+end)
+
+local shakeGiftButton = GifterTab:AddButton("Send Tropical Shakes", function()
+    if isGiftingShakes then
+        isGiftingShakes = false
+        shakeGiftButton.Text = "Send Tropical Shakes"
+        return
+    end
+    
+    if selectedPlayerShake and shakeCount and shakeCount > 0 then
+        isGiftingShakes = true
+        shakeGiftButton.Text = "Stop Sending Shakes"
+        
+        local successCount = 0
+        local failCount = 0
+        
+        for i = 1, shakeCount do
+            if not isGiftingShakes then break end
+            
+            local success, errorMsg = pcall(function()
+                local args = {
+                    [1] = "giftRequest",
+                    [2] = selectedPlayerShake,
+                    [3] = "Tropical Shake"
+                }
+                ReplicatedStorage.rEvents.giftRemote:InvokeServer(unpack(args))
+            end)
+            
+            if success then
+                successCount = successCount + 1
+            else
+                failCount = failCount + 1
+                warn("Error sending shake: " .. tostring(errorMsg))
+            end
+            
+            task.wait(0.1)
+        end
+        
+        isGiftingShakes = false
+        shakeGiftButton.Text = "Send Tropical Shakes"
+        print("Finished sending shakes. Success: " .. successCount .. ", Failed: " .. failCount)
+    end
+end)
