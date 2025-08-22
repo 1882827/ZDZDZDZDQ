@@ -59,8 +59,8 @@ local window = library:AddWindow("Sad | Boost Gifter", {
 })
 
 local GifterTab = window:AddTab("Gifter")
-GifterTab:AddLabel("Gifter").TextSize = 20
-GifterTab:AddLabel("Get on a machine for less Lag").TextSize = 17
+
+GifterTab:AddLabel("Get On a Machine For Less Lag").TextSize = 17
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -182,3 +182,4 @@ task.spawn(function()
         task.wait(7.5)
     end
 end)
+
